@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="CENTER" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mabmab.sistemasdistribuidos.ControllerCandidatointerface">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+   <AnchorPane>
+      <VBox.margin>
+         <Insets bottom="20.0" />
+      </VBox.margin>
+      <children>
+          <Label layoutX="198.0" text="Dados do Candidato">
+              <font>
+                  <Font size="18.0" />
+              </font>
+          </Label>
+         <Button alignment="TOP_RIGHT" layoutX="424.0" layoutY="1.0" mnemonicParsing="false" onAction="#deleteCandidato" text="Deletar Cadastro" textAlignment="CENTER" />
+      </children>
+   </AnchorPane>
+    <GridPane alignment="CENTER">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="150.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <!-- Add more row constraints as needed -->
+        </rowConstraints>
+        <Label text="Nome:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <TextField fx:id="nomeCandidato" prefHeight="26.0" prefWidth="219.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <TextField fx:id="emailCandidato" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <Label text="Senha:" GridPane.rowIndex="2" />
+      <TextField fx:id="senhaCandidato" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <Button fx:id="attDadosCandidato" mnemonicParsing="false" onAction="#attDadosCandidato" text="Atualizar" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <!-- Add more labels and text fields for additional candidate data -->
+    </GridPane>
+   <Button fx:id="logout" mnemonicParsing="false" onAction="#logoutCandidato" text="Logout" />
+</VBox>

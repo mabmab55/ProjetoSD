@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="253.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mabmab.sistemasdistribuidos.ControllerConfigurarIP">
+   <children>
+      <Label layoutX="36.0" layoutY="177.0" text="IP" />
+      <TextField fx:id="insertedIP" layoutX="63.0" layoutY="173.0" promptText="IP" />
+      <Button fx:id="definirIP" layoutX="96.0" layoutY="222.0" mnemonicParsing="false" onAction="#clickDefinirIP" text="Definir IP" />
+   </children>
+</AnchorPane>
