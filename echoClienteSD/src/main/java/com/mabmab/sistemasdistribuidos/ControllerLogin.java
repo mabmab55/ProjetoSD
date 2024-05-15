@@ -54,8 +54,10 @@ public class ControllerLogin {
 
             // Parse the response JSON
             JSONObject responseJson = new JSONObject(response);
-            ConnectionConfig.TOKEN = responseJson.getString("token");
-            System.out.println(ConnectionConfig.TOKEN + " token");
+            if (responseJson.getInt("status") == 200) {
+                ConnectionConfig.TOKEN = responseJson.getString("token");
+                System.out.println(ConnectionConfig.TOKEN + " token");
+            }
             // Check the login status
             int status = responseJson.getInt("status");
             if (status == 200) {
