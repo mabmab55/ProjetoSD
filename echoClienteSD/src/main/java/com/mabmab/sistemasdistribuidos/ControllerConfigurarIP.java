@@ -19,7 +19,7 @@ public class ControllerConfigurarIP {
         ConnectionConfig.SERVER_IP = IP;
         System.out.println(ConnectionConfig.SERVER_IP);
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cadastro.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("initialScreen.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(scene);

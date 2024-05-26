@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" minHeight="364.0" prefHeight="427.0" prefWidth="373.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mabmab.sistemasdistribuidos.ControllerInitialScreen">
+    <Button fx:id="configurarIP" mnemonicParsing="false" onAction="#clickConfigurarIP" text="Configurar IP">
+      <VBox.margin>
+         <Insets bottom="40.0" />
+      </VBox.margin></Button>
+   <Button fx:id="selectCandidato" mnemonicParsing="false" onAction="#selectCandidato" text="Candidato" />
+   <Button fx:id="selectEmpresa" mnemonicParsing="false" onAction="#selectEmpresa" text="Empresa" />
+</VBox>

@@ -6,26 +6,24 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-
 import javafx.stage.Stage;
 import org.json.JSONObject;
 
-public class ControllerCadastro {
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 
-    public TextField nomeCadastro;
-    public TextField emailCadastro;
-    public TextField senhaCadastro;
-
+public class ControllerCadastroEmpresa {
+    public TextField razaoSocial;
+    public TextField emailE;
+    public TextField cnpjE;
+    public TextField senhaE;
+    public TextField descricaoE;
+    public TextField ramoE;
 
     @FXML
     public void initialize() {
-
+        // Initialization code if needed
     }
 
     @FXML
@@ -33,45 +31,51 @@ public class ControllerCadastro {
         PrintWriter out = SocketSingleton.getOutputWriter();
         BufferedReader in = SocketSingleton.getBufferedReader();
 
-        String nome = nomeCadastro.getText();
-        String email = emailCadastro.getText();
-        String senha = senhaCadastro.getText();
+        String razaoSocialText = razaoSocial.getText();
+        String emailText = emailE.getText();
+        String cnpjText = cnpjE.getText();
+        String senhaText = senhaE.getText();
+        String descricaoText = descricaoE.getText();
+        String ramoText = ramoE.getText();
 
         // Create a JSON object
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("operacao", "cadastrarCandidato");
-        jsonObject.put("nome", nome);
-        jsonObject.put("email", email);
-        jsonObject.put("senha", senha);
+        jsonObject.put("operacao", "cadastrarEmpresa");
+        jsonObject.put("razaoSocial", razaoSocialText);
+        jsonObject.put("email", emailText);
+        jsonObject.put("cnpj", cnpjText);
+        jsonObject.put("senha", senhaText);
+        jsonObject.put("descricao", descricaoText);
+        jsonObject.put("ramo", ramoText);
 
         // Send JSON string to server
         out.println(jsonObject.toString());
-        System.out.println("Enviando : "+jsonObject);
+        System.out.println("Enviando: " + jsonObject);
 
         // Clear the text fields after sending
-        nomeCadastro.clear();
-        emailCadastro.clear();
-        senhaCadastro.clear();
+        razaoSocial.clear();
+        emailE.clear();
+        cnpjE.clear();
+        senhaE.clear();
+        descricaoE.clear();
+        ramoE.clear();
 
         try {
             String response = in.readLine();
             System.out.println(response);
             JSONObject responseJson = new JSONObject(response);
             ConnectionConfig.TOKEN = responseJson.getString("token");
-            //System.out.println(ConnectionConfig.TOKEN + " token");
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
-    public void irParaLogin(ActionEvent actionEvent) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("login.fxml"));
+    public void irParaLoginE(ActionEvent actionEvent) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("loginEmpresa.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 320, 360);
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.setTitle("Login");
         stage.show();
     }
-
 }

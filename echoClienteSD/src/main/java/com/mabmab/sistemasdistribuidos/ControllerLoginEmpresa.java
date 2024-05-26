@@ -6,26 +6,21 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
-
 import javafx.stage.Stage;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.Socket;
 
-public class ControllerLogin {
+public class ControllerLoginEmpresa {
     public TextField emailLogin;
     public TextField senhaLogin;
 
-
     @FXML
     public void initialize() {
-
+        // Initialize if needed
     }
-
 
     public void onSendClick(ActionEvent actionEvent) throws IOException {
         PrintWriter out = SocketSingleton.getOutputWriter();
@@ -36,13 +31,13 @@ public class ControllerLogin {
 
         // Create a JSON object
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("operacao", "loginCandidato");
+        jsonObject.put("operacao", "loginEmpresa");
         jsonObject.put("email", email);
         jsonObject.put("senha", senha);
 
         // Send JSON string to server
         out.println(jsonObject.toString());
-        System.out.println("Enviando : "+jsonObject);
+        System.out.println("Enviando: " + jsonObject);
 
         // Clear the text fields after sending
         senhaLogin.clear();
@@ -62,14 +57,14 @@ public class ControllerLogin {
             int status = responseJson.getInt("status");
             if (status == 200) {
                 System.out.println(responseJson.toString());
-                // Successful login, redirect to CandidatoInterface
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("candidatointerface.fxml"));
+                // Successful login, redirect to EmpresaInterface
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("empresainterface.fxml"));
                 Scene scene = new Scene(fxmlLoader.load(), 800, 600);
-                ControllerCandidatointerface controller = fxmlLoader.getController();
+                ControllerEmpresaInterface controller = fxmlLoader.getController();
                 controller.initData(email);
                 Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
                 stage.setScene(scene);
-                stage.setTitle("Candidato Interface");
+                stage.setTitle("Empresa Interface");
                 stage.show();
             } else {
                 System.out.println(responseJson.toString());
@@ -80,11 +75,11 @@ public class ControllerLogin {
     }
 
     public void irParaCadastro(ActionEvent actionEvent) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cadastro.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cadastroEmpresa.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 320, 360);
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(scene);
-        stage.setTitle("Cadastro");
+        stage.setTitle("Cadastro Empresa");
         stage.show();
     }
 }

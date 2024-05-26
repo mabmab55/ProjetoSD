@@ -10,6 +10,7 @@
 
         <!--<class>com.mabmab.Event</class>-->
         <class>com.mabmab.Candidato</class>
+        <class>com.mabmab.Empresa</class>
 
         <properties>
             <!-- Database connection settings -->
