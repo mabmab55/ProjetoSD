@@ -69,6 +69,9 @@ public class Echo extends Thread {
                     case "logout":
                         logout(jsonObject, out);
                         break;       // Exit the thread after logout
+                    case "cadastrarCompetenciaExperiencia":
+                        cadastrarCompetenciaExperiencia(jsonObject, out);
+                        break;
                     default:
                         out.println("Invalid operation: " + operacao);
                         break;
@@ -82,6 +85,63 @@ public class Echo extends Thread {
                 clientSocket.close(); // Close the connection after handling all operations
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    private void cadastrarCompetenciaExperiencia(JSONObject jsonObject, PrintWriter out) {
+        String email = jsonObject.getString("email");
+        String token = jsonObject.getString("token");
+        EntityManager entityManager = null;
+
+        try {
+            entityManager = entityManagerFactory.createEntityManager();
+            entityManager.getTransaction().begin();
+
+            // Find the candidate by email
+            TypedQuery<Candidato> queryCandidato = entityManager.createQuery("SELECT c FROM Candidato c WHERE c.email = :email", Candidato.class);
+            queryCandidato.setParameter("email", email);
+            Candidato candidato = queryCandidato.getSingleResult();
+
+            if (candidato == null) {
+                sendErrorResponse(out, "cadastrarCompetenciaExperiencia", 404, "Candidato não encontrado");
+                return;
+            }
+
+            // Parse and save each CompetenciaExperiencia
+            for (Object obj : jsonObject.getJSONArray("competenciaExperiencia")) {
+                JSONObject compExpJson = (JSONObject) obj;
+                String competenciaNome = compExpJson.getString("competencia");
+                int experiencia = compExpJson.getInt("experiencia");
+
+                // Find or create Competencia
+                Competencia competencia = entityManager.find(Competencia.class, competenciaNome);
+                if (competencia == null) {
+                    competencia = new Competencia(competenciaNome);
+                    entityManager.persist(competencia);
+                }
+
+                // Create and persist CompetenciaExperiencia
+                CompetenciaExperiencia compExp = new CompetenciaExperiencia(candidato, competencia, experiencia);
+                entityManager.persist(compExp);
+            }
+
+            entityManager.getTransaction().commit();
+
+            // Send success response
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("operacao", "cadastrarCompetenciaExperiencia");
+            responseJson.put("status", 201);
+            out.println(responseJson.toString());
+
+        } catch (NoResultException e) {
+            sendErrorResponse(out, "cadastrarCompetenciaExperiencia", 404, "Candidato não encontrado");
+        } catch (Exception e) {
+            e.printStackTrace();
+            sendErrorResponse(out, "cadastrarCompetenciaExperiencia", 500, "Erro ao cadastrar competências e experiências.");
+        } finally {
+            if (entityManager != null) {
+                entityManager.close();
             }
         }
     }

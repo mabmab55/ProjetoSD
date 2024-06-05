@@ -11,6 +11,8 @@
         <!--<class>com.mabmab.Event</class>-->
         <class>com.mabmab.Candidato</class>
         <class>com.mabmab.Empresa</class>
+        <class>com.mabmab.Competencia</class>
+        <class>com.mabmab.CompetenciaExperiencia</class>
 
         <properties>
             <!-- Database connection settings -->

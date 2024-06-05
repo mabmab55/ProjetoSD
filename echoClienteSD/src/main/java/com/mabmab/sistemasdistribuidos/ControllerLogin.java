@@ -56,16 +56,18 @@ public class ControllerLogin {
             JSONObject responseJson = new JSONObject(response);
             if (responseJson.getInt("status") == 200) {
                 ConnectionConfig.TOKEN = responseJson.getString("token");
+                ConnectionConfig.EMAIL = email;
                 System.out.println(ConnectionConfig.TOKEN + " token");
+                System.out.println(ConnectionConfig.EMAIL + " email");
             }
             // Check the login status
             int status = responseJson.getInt("status");
             if (status == 200) {
-                System.out.println(responseJson.toString());
-                // Successful login, redirect to CandidatoInterface
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("candidatointerface.fxml"));
+                System.out.println(responseJson);
+                // Successful login, redirect to menuCandidato
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("menuCandidato.fxml"));
                 Scene scene = new Scene(fxmlLoader.load(), 800, 600);
-                ControllerCandidatointerface controller = fxmlLoader.getController();
+                ControllerMenuCandidato controller = fxmlLoader.getController();
                 controller.initData(email);
                 Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
                 stage.setScene(scene);
