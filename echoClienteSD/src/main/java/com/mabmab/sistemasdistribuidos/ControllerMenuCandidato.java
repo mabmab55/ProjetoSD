@@ -20,7 +20,7 @@ public class ControllerMenuCandidato {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("candidatointerface.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 600);
         ControllerCandidatointerface controller = fxmlLoader.getController();
-        controller.initData(emailCandidato);
+        controller.initData(ConnectionConfig.EMAIL);
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.setTitle("Candidato Interface");

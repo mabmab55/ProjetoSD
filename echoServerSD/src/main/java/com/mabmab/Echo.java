@@ -2,12 +2,14 @@ package com.mabmab;
 
 import java.io.*;
 import java.net.*;
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Echo extends Thread {
@@ -29,7 +31,7 @@ public class Echo extends Thread {
 
             String jsonString;
             while ((jsonString = in.readLine()) != null) {
-                System.out.println(jsonString);
+                System.out.println("recebi:" + jsonString);
 
                 JSONObject jsonObject = new JSONObject(jsonString);
                 String operacao = jsonObject.getString("operacao");
@@ -72,6 +74,9 @@ public class Echo extends Thread {
                     case "cadastrarCompetenciaExperiencia":
                         cadastrarCompetenciaExperiencia(jsonObject, out);
                         break;
+                    case "visualizarCompetenciaExperiencia":
+                        visualizarCompetenciaExperiencia(jsonObject, out);
+                        break;
                     default:
                         out.println("Invalid operation: " + operacao);
                         break;
@@ -88,6 +93,62 @@ public class Echo extends Thread {
             }
         }
     }
+
+    private void visualizarCompetenciaExperiencia(JSONObject jsonObject, PrintWriter out) {
+        String email = jsonObject.getString("email");
+        String token = jsonObject.getString("token");
+        EntityManager entityManager = null;
+
+        try {
+            entityManager = entityManagerFactory.createEntityManager();
+
+            // Find the candidate by email
+            TypedQuery<Candidato> queryCandidato = entityManager.createQuery("SELECT c FROM Candidato c WHERE c.email = :email", Candidato.class);
+            queryCandidato.setParameter("email", email);
+            Candidato candidato = queryCandidato.getSingleResult();
+
+            if (candidato == null) {
+                sendErrorResponse(out, "visualizarCompetenciaExperiencia", 404, "Candidato não encontrado");
+                return;
+            }
+
+            // Query to find all CompetenciaExperiencia for the given candidate
+            TypedQuery<CompetenciaExperiencia> queryCompExp = entityManager.createQuery(
+                    "SELECT ce FROM CompetenciaExperiencia ce WHERE ce.candidato.email = :email", CompetenciaExperiencia.class);
+            queryCompExp.setParameter("email", email);
+            List<CompetenciaExperiencia> competenciasExperiencias = queryCompExp.getResultList();
+
+            // Build the JSON response
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("operacao", "visualizarCompetenciaExperiencia");
+            responseJson.put("status", 201);
+            JSONArray compExpArray = new JSONArray();
+
+            for (CompetenciaExperiencia ce : competenciasExperiencias) {
+                JSONObject compExpJson = new JSONObject();
+                compExpJson.put("competencia", ce.getCompetencia().getNome());
+                compExpJson.put("experiencia", ce.getExperiencia());
+                compExpArray.put(compExpJson);
+            }
+
+            responseJson.put("competenciaExperiencia", compExpArray);
+
+            // Send the JSON response to the client
+            out.println(responseJson.toString());
+            System.out.println(responseJson + " enviado ");
+
+        } catch (NoResultException e) {
+            sendErrorResponse(out, "visualizarCompetenciaExperiencia", 404, "Candidato não encontrado");
+        } catch (Exception e) {
+            e.printStackTrace();
+            sendErrorResponse(out, "visualizarCompetenciaExperiencia", 500, "Erro ao buscar competências e experiências.");
+        } finally {
+            if (entityManager != null) {
+                entityManager.close();
+            }
+        }
+    }
+
 
     private void cadastrarCompetenciaExperiencia(JSONObject jsonObject, PrintWriter out) {
         String email = jsonObject.getString("email");
@@ -133,6 +194,7 @@ public class Echo extends Thread {
             responseJson.put("operacao", "cadastrarCompetenciaExperiencia");
             responseJson.put("status", 201);
             out.println(responseJson.toString());
+            System.out.println(responseJson);
 
         } catch (NoResultException e) {
             sendErrorResponse(out, "cadastrarCompetenciaExperiencia", 404, "Candidato não encontrado");

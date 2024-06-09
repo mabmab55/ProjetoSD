@@ -1,10 +1,15 @@
 package com.mabmab.sistemasdistribuidos;
 
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -45,5 +50,16 @@ public class ControllerCadastrarCompetExp {
         PrintWriter out = SocketSingleton.getOutputWriter();
         out.println(jsonObject.toString());
         System.out.println("Enviando " + jsonObject);
+
+        BufferedReader in = SocketSingleton.getBufferedReader();
+        System.out.println("Recebido" + in.readLine());
+    }
+
+    public void handleRetornar(ActionEvent actionEvent) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("menuCandidato.fxml"));
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(fxmlLoader.load(), 800, 600));
+        stage.setTitle("MENU");
+        stage.show();
     }
 }

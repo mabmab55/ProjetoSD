@@ -21,6 +21,7 @@
                 <Label text="Experiência:" />
                 <TextField fx:id="experienciaTextField" />
                 <Button text="Salvar" onAction="#handleSalvarCompetExp" />
+                <Button text="Retornar" onAction="#handleRetornar" />
             </children>
         </VBox>
     </children>
