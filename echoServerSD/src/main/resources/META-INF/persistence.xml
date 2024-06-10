@@ -13,6 +13,7 @@
         <class>com.mabmab.Empresa</class>
         <class>com.mabmab.Competencia</class>
         <class>com.mabmab.CompetenciaExperiencia</class>
+        <class>com.mabmab.Vaga</class>
 
         <properties>
             <!-- Database connection settings -->

@@ -2,6 +2,8 @@ package com.mabmab;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "Empresa")
 public class Empresa {
@@ -91,5 +93,16 @@ public class Empresa {
 
     public void setRamo(String ramo) {
         this.ramo = ramo;
+    }
+
+    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL)
+    private List<Vaga> vagas;
+
+    public List<Vaga> getVagas() {
+        return vagas;
+    }
+
+    public void setVagas(List<Vaga> vagas) {
+        this.vagas = vagas;
     }
 }

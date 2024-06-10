@@ -51,20 +51,19 @@ public class ControllerLoginEmpresa {
             JSONObject responseJson = new JSONObject(response);
             if (responseJson.getInt("status") == 200) {
                 ConnectionConfig.TOKEN = responseJson.getString("token");
+                ConnectionConfig.EMAIL = email;
                 System.out.println(ConnectionConfig.TOKEN + " token");
             }
             // Check the login status
             int status = responseJson.getInt("status");
             if (status == 200) {
                 System.out.println(responseJson.toString());
-                // Successful login, redirect to EmpresaInterface
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("empresainterface.fxml"));
+                // Successful login, redirect to
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("menuEmpresa.fxml"));
                 Scene scene = new Scene(fxmlLoader.load(), 800, 600);
-                ControllerEmpresaInterface controller = fxmlLoader.getController();
-                controller.initData(email);
                 Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
                 stage.setScene(scene);
-                stage.setTitle("Empresa Interface");
+                stage.setTitle("Empresa Menu");
                 stage.show();
             } else {
                 System.out.println(responseJson.toString());

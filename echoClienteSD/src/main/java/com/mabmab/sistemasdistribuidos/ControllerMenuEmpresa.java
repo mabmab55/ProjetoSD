@@ -8,41 +8,32 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class ControllerMenuCandidato {
-
-    public String emailCandidato;
-
-    public void initData(String email) {
-        emailCandidato = email;
-    }
-
+public class ControllerMenuEmpresa {
     public void handleVisualizarDados(ActionEvent actionEvent) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("candidatointerface.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("empresainterface.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 600);
-        ControllerCandidatointerface controller = fxmlLoader.getController();
+        ControllerEmpresaInterface controller = fxmlLoader.getController();
         controller.initData(ConnectionConfig.EMAIL);
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(scene);
-        stage.setTitle("Candidato Interface");
+        stage.setTitle("Empresa Interface");
         stage.show();
     }
 
-    public void handleCadastrarCompetExp(ActionEvent actionEvent) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cadastrarCompetExp.fxml"));
+    public void handleCadastrarVagas(ActionEvent actionEvent) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("cadastrarVaga.fxml"));
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(new Scene(fxmlLoader.load(), 800, 600));
-        stage.setTitle("Cadastrar Competência e Experiência");
+        stage.setTitle("Cadastrar vaga");
         stage.show();
     }
 
-    public void handleVisualizarCompetExp(ActionEvent actionEvent) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("verCompetExp.fxml"));
+    public void handleListarVagas(ActionEvent actionEvent) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("listarVagas.fxml"));
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(new Scene(fxmlLoader.load(), 800, 600));
-        stage.setTitle("Ver Compet Exp");
+        stage.setTitle("Listar vagas");
         stage.show();
     }
 
-    public void handleVisualizarVagas(ActionEvent actionEvent) {
-    }
 }

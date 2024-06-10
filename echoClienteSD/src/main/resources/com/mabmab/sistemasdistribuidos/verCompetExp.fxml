@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17.0.2-ea" fx:controller="com.mabmab.sistemasdistribuidos.ControllerVerCompetExp">
+    <children>
+      <Button mnemonicParsing="false" onAction="#voltar" text="Voltar">
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin>
+      </Button>
+        <TableView fx:id="tableView" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colCompetencia" text="Competência" />
+                <TableColumn fx:id="colExperiencia" text="Experiência" />
+                <TableColumn fx:id="colAcoes" text="Ações" />
+            </columns>
+        </TableView>
+    </children>
+</VBox>

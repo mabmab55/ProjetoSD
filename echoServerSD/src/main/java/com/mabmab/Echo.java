@@ -2,13 +2,12 @@ package com.mabmab;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.TypedQuery;
+import jakarta.persistence.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -70,12 +69,33 @@ public class Echo extends Thread {
                         break;
                     case "logout":
                         logout(jsonObject, out);
-                        break;       // Exit the thread after logout
+                        break;
                     case "cadastrarCompetenciaExperiencia":
                         cadastrarCompetenciaExperiencia(jsonObject, out);
                         break;
                     case "visualizarCompetenciaExperiencia":
                         visualizarCompetenciaExperiencia(jsonObject, out);
+                        break;
+                    case "apagarCompetenciaExperiencia":
+                        apagarCompetenciaExperiencia(jsonObject, out);
+                        break;
+                    case "atualizarCompetenciaExperiencia":
+                        atualizarCompetenciaExperiencia(jsonObject, out);
+                        break;
+                    case "cadastrarVaga":
+                        cadastrarVaga(jsonObject, out);
+                        break;
+                    case "listarVagas":
+                        listarVagas(jsonObject, out);
+                        break;
+                    case "visualizarVaga":
+                        visualizarVaga(jsonObject, out);
+                        break;
+                    case "atualizarVaga":
+                        atualizarVaga(jsonObject, out);
+                        break;
+                    case "apagarVaga":
+                        apagarVaga(jsonObject, out);
                         break;
                     default:
                         out.println("Invalid operation: " + operacao);
@@ -93,6 +113,428 @@ public class Echo extends Thread {
             }
         }
     }
+
+    private void apagarVaga(JSONObject jsonObject, PrintWriter out) {
+        try {
+            int idVaga = jsonObject.getInt("idVaga");
+
+            EntityManager entityManager = entityManagerFactory.createEntityManager();
+            entityManager.getTransaction().begin();
+
+            // Verificar se a vaga existe
+            Vaga vaga = entityManager.find(Vaga.class, idVaga);
+            if (vaga == null) {
+                // Se a vaga não existir, enviar uma resposta com status 422
+                JSONObject responseJson = new JSONObject();
+                responseJson.put("operacao", "apagarVaga");
+                responseJson.put("status", 422);
+                responseJson.put("mensagem", "Vaga não encontrada");
+                out.println(responseJson.toString());
+                return;
+            }
+
+            entityManager.remove(vaga);
+            entityManager.getTransaction().commit();
+
+            // Enviar uma resposta de sucesso para o cliente
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("operacao", "apagarVaga");
+            responseJson.put("status", 201);
+            responseJson.put("mensagem", "Vaga apagada com sucesso");
+            out.println(responseJson.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Enviar uma resposta de erro para o cliente
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("operacao", "apagarVaga");
+            responseJson.put("status", 500); // Código de erro interno do servidor
+            responseJson.put("mensagem", "Erro ao apagar a vaga");
+            out.println(responseJson.toString());
+        }
+    }
+
+
+    private void atualizarVaga(JSONObject jsonObject, PrintWriter out) {
+        // Obter os dados da vaga do JSONObject
+        int idVaga = jsonObject.getInt("idVaga");
+        String nome = jsonObject.getString("nome");
+        double faixaSalarial = jsonObject.getDouble("faixaSalarial");
+        String descricao = jsonObject.getString("descricao");
+        String estado = jsonObject.getString("estado");
+        JSONArray competenciasArray = jsonObject.getJSONArray("competencias");
+
+        EntityManager entityManager = null;
+        try {
+            entityManager = entityManagerFactory.createEntityManager();
+            entityManager.getTransaction().begin();
+
+            // Verificar se a vaga existe
+            Vaga vaga = entityManager.find(Vaga.class, idVaga);
+            if (vaga == null) {
+                // Se a vaga não existir, enviar uma resposta com status 422
+                JSONObject responseJson = new JSONObject();
+                responseJson.put("operacao", "atualizarVaga");
+                responseJson.put("status", 422);
+                responseJson.put("mensagem", "Vaga não encontrada");
+                out.println(responseJson.toString());
+                return;
+            }
+
+            // Atualizar os dados da vaga
+            vaga.setNome(nome);
+            vaga.setFaixaSalarial(faixaSalarial);
+            vaga.setDescricao(descricao);
+            vaga.setEstado(estado);
+            // Limpar as competências existentes e adicionar as novas
+            vaga.getCompetencias().clear();
+            for (int i = 0; i < competenciasArray.length(); i++) {
+                String nomeCompetencia = competenciasArray.getString(i);
+                // Aqui você pode implementar a lógica para buscar a competência pelo nome diretamente no banco de dados
+                // por meio de uma consulta JPQL ou SQL
+                List<Competencia> competencias = entityManager.createQuery("SELECT c FROM Competencia c WHERE c.nome = :nome", Competencia.class)
+                        .setParameter("nome", nomeCompetencia)
+                        .getResultList();
+                if (!competencias.isEmpty()) {
+                    vaga.getCompetencias().addAll(competencias);
+                } else {
+                    // Lidar com o caso em que a competência não é encontrada
+                }
+            }
+
+            entityManager.getTransaction().commit();
+
+            // Enviar uma resposta de sucesso para o cliente
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("operacao", "atualizarVaga");
+            responseJson.put("status", 201);
+            responseJson.put("mensagem", "Vaga atualizada com sucesso");
+            out.println(responseJson.toString());
+            System.out.println(responseJson);
+        } catch (Exception e) {
+            if (entityManager != null && entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+            }
+            e.printStackTrace();
+            // Enviar uma resposta de erro para o cliente
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("operacao", "atualizarVaga");
+            responseJson.put("status", 500); // Código de erro interno do servidor
+            responseJson.put("mensagem", "Erro ao atualizar a vaga");
+            out.println(responseJson.toString());
+            System.out.println(responseJson);
+        } finally {
+            if (entityManager != null) {
+                entityManager.close();
+            }
+        }
+    }
+
+
+
+    private void visualizarVaga(JSONObject jsonObject, PrintWriter out) {
+        int idVaga = jsonObject.getInt("idVaga");
+        String email = jsonObject.getString("email");
+        String token = jsonObject.getString("token");
+
+        EntityManager entityManager = null;
+        try {
+            entityManager = entityManagerFactory.createEntityManager();
+
+            // Busque a vaga pelo id
+            Vaga vaga = entityManager.find(Vaga.class, idVaga);
+
+            if (vaga == null) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("operacao", "visualizarVaga");
+                errorJson.put("status", 404);
+                errorJson.put("mensagem", "Vaga não encontrada");
+                out.println(errorJson.toString());
+                return;
+            }
+
+            // Construir o JSON de resposta
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("operacao", "visualizarVaga");
+            responseJson.put("faixaSalarial", vaga.getFaixaSalarial());
+            responseJson.put("descricao", vaga.getDescricao());
+            responseJson.put("estado", vaga.getEstado());
+
+            JSONArray competenciasArray = new JSONArray();
+            for (Competencia competencia : vaga.getCompetencias()) {
+                competenciasArray.put(competencia.getNome());
+            }
+            responseJson.put("competencias", competenciasArray);
+            responseJson.put("status", 201);
+
+            // Enviar a resposta JSON ao cliente
+            out.println(responseJson.toString());
+            System.out.println("Enviando: " + responseJson);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JSONObject errorJson = new JSONObject();
+            errorJson.put("operacao", "visualizarVaga");
+            errorJson.put("status", 500);
+            errorJson.put("mensagem", "Erro ao visualizar vaga");
+            out.println(errorJson.toString());
+        } finally {
+            if (entityManager != null) {
+                entityManager.close();
+            }
+        }
+    }
+
+    private void listarVagas(JSONObject jsonObject, PrintWriter out) {
+        String email = jsonObject.getString("email");
+        String token = jsonObject.getString("token");
+
+        EntityManager entityManager = null;
+        try {
+            entityManager = entityManagerFactory.createEntityManager();
+
+            // Encontre a empresa pelo email
+            TypedQuery<Empresa> queryEmpresa = entityManager.createQuery("SELECT e FROM Empresa e WHERE e.email = :email", Empresa.class);
+            queryEmpresa.setParameter("email", email);
+            Empresa empresa = queryEmpresa.getSingleResult();
+
+            if (empresa == null) {
+                JSONObject errorJson = new JSONObject();
+                errorJson.put("operacao", "listarVagas");
+                errorJson.put("status", 422);
+                errorJson.put("mensagem", "Empresa não encontrada");
+                out.println(errorJson.toString());
+                return;
+            }
+
+            // Busque todas as vagas associadas à empresa
+            TypedQuery<Vaga> queryVagas = entityManager.createQuery("SELECT v FROM Vaga v WHERE v.empresa = :empresa", Vaga.class);
+            queryVagas.setParameter("empresa", empresa);
+            List<Vaga> vagas = queryVagas.getResultList();
+
+            // Construir o JSON de resposta
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("operacao", "listarVagas");
+            responseJson.put("status", 201);
+
+            JSONArray vagasArray = new JSONArray();
+            for (Vaga vaga : vagas) {
+                JSONObject vagaJson = new JSONObject();
+                vagaJson.put("idVaga", vaga.getId());
+                vagaJson.put("nome", vaga.getNome());
+                vagasArray.put(vagaJson);
+            }
+            responseJson.put("vagas", vagasArray);
+
+            // Enviar a resposta JSON ao cliente
+            out.println(responseJson.toString());
+            System.out.println("Enviando: " + responseJson);
+
+        } catch (NoResultException e) {
+            JSONObject errorJson = new JSONObject();
+            errorJson.put("operacao", "listarVagas");
+            errorJson.put("status", 422);
+            errorJson.put("mensagem", "Empresa não encontrada");
+            out.println(errorJson.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            JSONObject errorJson = new JSONObject();
+            errorJson.put("operacao", "listarVagas");
+            errorJson.put("status", 500);
+            errorJson.put("mensagem", "Erro ao listar vagas");
+            out.println(errorJson.toString());
+        } finally {
+            if (entityManager != null) {
+                entityManager.close();
+            }
+        }
+    }
+
+    private void cadastrarVaga(JSONObject jsonObject, PrintWriter out) {
+        String nome = jsonObject.getString("nome");
+        String email = jsonObject.getString("email");
+        double faixaSalarial = jsonObject.getDouble("faixaSalarial");
+        String descricao = jsonObject.getString("descricao");
+        String estado = jsonObject.getString("estado");
+        JSONArray competenciasArray = jsonObject.getJSONArray("competencias");
+        String token = jsonObject.getString("token");
+
+        EntityManager entityManager = null;
+
+        try {
+            entityManager = entityManagerFactory.createEntityManager();
+            entityManager.getTransaction().begin();
+
+            // Verifica se o token é válido (não mostrado aqui)
+
+            // Encontra a empresa pelo email
+            TypedQuery<Empresa> queryEmpresa = entityManager.createQuery("SELECT e FROM Empresa e WHERE e.email = :email", Empresa.class);
+            queryEmpresa.setParameter("email", email);
+            Empresa empresa = queryEmpresa.getSingleResult();
+
+            if (empresa == null) {
+                sendErrorResponse(out, "cadastrarVaga", 422, "Empresa não encontrada");
+                return;
+            }
+
+            // Cria a nova instância de Vaga
+            Vaga vaga = new Vaga();
+            vaga.setNome(nome);
+            vaga.setEmpresa(empresa);
+            vaga.setFaixaSalarial(faixaSalarial);
+            vaga.setDescricao(descricao);
+            vaga.setEstado(estado); // Supondo que EstadoVaga seja uma enumeração
+
+            // Associa as competências à vaga
+            List<Competencia> competencias = new ArrayList<>();
+            for (int i = 0; i < competenciasArray.length(); i++) {
+                String competenciaNome = competenciasArray.getString(i);
+                TypedQuery<Competencia> queryCompetencia = entityManager.createQuery("SELECT c FROM Competencia c WHERE c.nome = :nome", Competencia.class);
+                queryCompetencia.setParameter("nome", competenciaNome);
+                Competencia competencia = queryCompetencia.getSingleResult();
+                if (competencia != null) {
+                    competencias.add(competencia);
+                }
+            }
+            vaga.setCompetencias(competencias);
+
+            // Persiste a nova vaga
+            entityManager.persist(vaga);
+            entityManager.getTransaction().commit();
+
+            // Envia a resposta de sucesso
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("operacao", "cadastrarVaga");
+            responseJson.put("status", 201);
+            responseJson.put("mensagem", "Vaga cadastrada com sucesso");
+            out.println(responseJson.toString());
+
+        } catch (NoResultException e) {
+            sendErrorResponse(out, "cadastrarVaga", 422, "Empresa ou competências não encontradas");
+        } catch (Exception e) {
+            e.printStackTrace();
+            sendErrorResponse(out, "cadastrarVaga", 500, "Erro ao cadastrar vaga");
+        } finally {
+            if (entityManager != null) {
+                entityManager.close();
+            }
+        }
+    }
+
+
+    private void atualizarCompetenciaExperiencia(JSONObject jsonObject, PrintWriter out) {
+        String email = jsonObject.getString("email");
+        String token = jsonObject.getString("token");
+        JSONArray competenciaExperienciaArray = jsonObject.getJSONArray("competenciaExperiencia");
+        EntityManager entityManager = null;
+
+        try {
+            entityManager = entityManagerFactory.createEntityManager();
+            entityManager.getTransaction().begin();
+
+            // Itere sobre as competências e experiências para atualizar
+            for (Object obj : competenciaExperienciaArray) {
+                JSONObject compExpJson = (JSONObject) obj;
+                String competenciaNome = compExpJson.getString("competencia");
+                int novaExperiencia = compExpJson.getInt("experiencia");
+
+                // Encontre a CompetenciaExperiencia para atualizar
+                TypedQuery<CompetenciaExperiencia> queryCompExp = entityManager.createQuery(
+                        "SELECT ce FROM CompetenciaExperiencia ce WHERE ce.candidato.email = :email " +
+                                "AND ce.competencia.nome = :competencia", CompetenciaExperiencia.class);
+                queryCompExp.setParameter("email", email);
+                queryCompExp.setParameter("competencia", competenciaNome);
+                CompetenciaExperiencia compExp = queryCompExp.getSingleResult();
+
+                // Atualize a experiência
+                compExp.setExperiencia(novaExperiencia);
+            }
+
+            entityManager.getTransaction().commit();
+
+            // Enviar resposta de sucesso
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("operacao", "atualizarCompetenciaExperiencia");
+            responseJson.put("status", 201);
+            responseJson.put("mensagem", "Competência/Experiência atualizada com sucesso");
+            out.println(responseJson.toString());
+            System.out.println(responseJson);
+
+        } catch (NoResultException e) {
+            // Se não houver CompetenciaExperiencia correspondente, envie uma resposta de erro
+            sendErrorResponse(out, "atualizarCompetenciaExperiencia", 422, "Competência/Experiência não encontrada para o candidato");
+        } catch (Exception e) {
+            // Se ocorrer um erro, envie uma resposta de erro
+            e.printStackTrace();
+            sendErrorResponse(out, "atualizarCompetenciaExperiencia", 500, "Erro ao atualizar competência/experiência.");
+        } finally {
+            if (entityManager != null) {
+                entityManager.close();
+            }
+        }
+    }
+
+
+    private void apagarCompetenciaExperiencia(JSONObject jsonObject, PrintWriter out) {
+        String email = jsonObject.getString("email");
+        String token = jsonObject.getString("token");
+        JSONArray competenciaExperienciaArray = jsonObject.getJSONArray("competenciaExperiencia");
+        EntityManager entityManager = null;
+
+        try {
+            entityManager = entityManagerFactory.createEntityManager();
+            entityManager.getTransaction().begin();
+
+            // Encontre o candidato por email
+            TypedQuery<Candidato> queryCandidato = entityManager.createQuery("SELECT c FROM Candidato c WHERE c.email = :email", Candidato.class);
+            queryCandidato.setParameter("email", email);
+            Candidato candidato = queryCandidato.getSingleResult();
+
+            if (candidato == null) {
+                sendErrorResponse(out, "apagarCompetenciaExperiencia", 404, "Candidato não encontrado");
+                return;
+            }
+
+            // Itere sobre as competências e experiências para excluir
+            for (Object obj : competenciaExperienciaArray) {
+                JSONObject compExpJson = (JSONObject) obj;
+                String competenciaNome = compExpJson.getString("competencia");
+                int experiencia = compExpJson.getInt("experiencia");
+
+                // Encontre a CompetenciaExperiencia para excluir
+                TypedQuery<CompetenciaExperiencia> queryCompExp = entityManager.createQuery(
+                        "SELECT ce FROM CompetenciaExperiencia ce WHERE ce.candidato.email = :email " +
+                                "AND ce.competencia.nome = :competencia AND ce.experiencia = :experiencia", CompetenciaExperiencia.class);
+                queryCompExp.setParameter("email", email);
+                queryCompExp.setParameter("competencia", competenciaNome);
+                queryCompExp.setParameter("experiencia", experiencia);
+                CompetenciaExperiencia compExp = queryCompExp.getSingleResult();
+
+                // Exclua a CompetenciaExperiencia
+                entityManager.remove(compExp);
+            }
+
+            entityManager.getTransaction().commit();
+
+            // Enviar resposta de sucesso
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("operacao", "apagarCompetenciaExperiencia");
+            responseJson.put("status", 201);
+            responseJson.put("mensagem", "Competencia/Experiencia apagada com sucesso");
+            out.println(responseJson.toString());
+            System.out.println(responseJson);
+
+        } catch (NoResultException e) {
+            sendErrorResponse(out, "apagarCompetenciaExperiencia", 422, "Competência/experiência não encontrada para o candidato");
+        } catch (Exception e) {
+            e.printStackTrace();
+            sendErrorResponse(out, "apagarCompetenciaExperiencia", 422, "Erro ao apagar competência/experiência.");
+        } finally {
+            if (entityManager != null) {
+                entityManager.close();
+            }
+        }
+    }
+
 
     private void visualizarCompetenciaExperiencia(JSONObject jsonObject, PrintWriter out) {
         String email = jsonObject.getString("email");
@@ -801,10 +1243,28 @@ public class Echo extends Thread {
         }
     }
 
+    public static void initializeCompetencias() {
+        EntityManagerFactory emf = EntityManagerFactorySingleton.getEntityManagerFactory();
+        EntityManager em = emf.createEntityManager();
+
+        List<String> nomesCompetencias = Arrays.asList("Python", "C#", "C++", "JS", "PHP", "Swift", "Java", "Go", "SQL",
+                "Ruby", "HTML", "CSS", "NOSQL", "Flutter", "TypeScript", "Perl", "Cobol", "dotNet", "Kotlin", "Dart");
+
+        em.getTransaction().begin();
+
+        for (String nome : nomesCompetencias) {
+            Competencia competencia = new Competencia(nome);
+            em.persist(competencia);
+        }
+
+        em.getTransaction().commit();
+    }
 
     public static void main(String[] args) throws IOException {
         ServerSocket serverSocket = null;
         EntityManagerFactory entityManagerFactory = EntityManagerFactorySingleton.getEntityManagerFactory();
+
+        initializeCompetencias();
 
         try {
             serverSocket = new ServerSocket(22222);

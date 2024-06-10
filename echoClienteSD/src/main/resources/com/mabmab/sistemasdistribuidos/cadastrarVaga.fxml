@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mabmab.sistemasdistribuidos.ControllerCadastrarVaga">
+
+    <Label text="Nome da Vaga:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+    <TextField fx:id="nomeVagaField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+    <Label text="Faixa Salarial:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+    <TextField fx:id="faixaSalarialField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+    <Label text="Descrição:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+    <TextArea fx:id="descricaoArea" prefHeight="100" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+    <Label text="Estado:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+    <TextField fx:id="estadoField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+    <Label text="Competências:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+    <TextArea fx:id="competenciasArea" prefHeight="100" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+    <HBox alignment="CENTER_RIGHT" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="5">
+      <Button mnemonicParsing="false" onAction="#voltar" text="Voltar" />
+        <Button onAction="#cadastrarVaga" text="Cadastrar" />
+    </HBox>
+   <columnConstraints>
+      <ColumnConstraints />
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+   </rowConstraints>
+</GridPane>

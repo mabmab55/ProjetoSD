@@ -184,4 +184,12 @@ public class ControllerCandidatointerface {
             e.printStackTrace();
         }
     }
+    public void voltar(ActionEvent actionEvent) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("menuCandidato.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 800, 600);
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.setTitle("Candidato Interface");
+        stage.show();
+    }
 }

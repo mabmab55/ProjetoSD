@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+
+<GridPane xmlns="http://javafx.com/javafx"
+          xmlns:fx="http://javafx.com/fxml"
+          fx:controller="com.mabmab.sistemasdistribuidos.ControllerVisualizarVaga"
+          alignment="CENTER"
+          hgap="10"
+          vgap="10"
+          prefHeight="400.0"
+          prefWidth="600.0">
+
+    <Label text="Faixa Salarial:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+    <TextField fx:id="faixaSalarialField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+    <Label text="Descrição:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+    <TextArea fx:id="descricaoArea" GridPane.columnIndex="1" GridPane.rowIndex="3" prefHeight="100" />
+
+    <Label text="Estado:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+    <TextField fx:id="estadoField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+    <Label text="Competências:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+    <TextArea fx:id="competenciasArea" GridPane.columnIndex="1" GridPane.rowIndex="5" prefHeight="100" />
+
+    <Button text="Atualizar" onAction="#atualizarVaga" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+    <Button text="Voltar" onAction="#voltar" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.halignment="RIGHT"/>
+</GridPane>
