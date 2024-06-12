@@ -108,6 +108,7 @@ public class ControllerEmpresaInterface {
             jsonObject.put("senha", senhaEmpresa.getText());
             jsonObject.put("descricao", descricaoEmpresa.getText());
             jsonObject.put("ramo", ramoEmpresa.getText());
+            jsonObject.put("token", ConnectionConfig.TOKEN);
 
             // Send JSON string to server
             out.println(jsonObject.toString());
