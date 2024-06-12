@@ -44,7 +44,7 @@ public class ControllerCadastrarCompetExp {
 
         jsonObject.put("competenciaExperiencia", competenciaExperienciaArray);
 
-        jsonObject.put("token", "UUID");
+        jsonObject.put("token", ConnectionConfig.TOKEN);
 
         // Enviar JSON para o servidor
         PrintWriter out = SocketSingleton.getOutputWriter();

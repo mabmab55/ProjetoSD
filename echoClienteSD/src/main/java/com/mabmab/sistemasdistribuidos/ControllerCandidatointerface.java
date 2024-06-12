@@ -55,6 +55,7 @@ public class ControllerCandidatointerface {
             System.out.println("trigger visualizar candidato");
             jsonObject.put("operacao", "visualizarCandidato");
             jsonObject.put("email", email);
+            jsonObject.put("token", ConnectionConfig.TOKEN);
             out.println(jsonObject.toString());
             System.out.println("Enviando " + jsonObject);
 

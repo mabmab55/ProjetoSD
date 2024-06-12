@@ -48,6 +48,7 @@ public class ControllerCadastroEmpresa {
         jsonObject.put("descricao", descricaoText);
         jsonObject.put("ramo", ramoText);
 
+
         // Send JSON string to server
         out.println(jsonObject.toString());
         System.out.println("Enviando: " + jsonObject);

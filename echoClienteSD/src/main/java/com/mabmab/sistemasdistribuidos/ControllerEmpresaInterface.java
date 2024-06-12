@@ -53,6 +53,7 @@ public class ControllerEmpresaInterface {
             System.out.println("trigger visualizar empresa");
             jsonObject.put("operacao", "visualizarEmpresa");
             jsonObject.put("email", email);
+            jsonObject.put("token", ConnectionConfig.TOKEN);
             out.println(jsonObject.toString());
             System.out.println("Enviando " + jsonObject);
 
